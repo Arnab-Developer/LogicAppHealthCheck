@@ -12,24 +12,24 @@ class LogicAppRepo
         return Get-AzLogicApp -ResourceGroupName $this.RgName
     }
 
-    [IEnumerable[LogicAppHealthCheckResult]] GetRunHistoryByName([string] $LogicAppName) 
+    [IEnumerable[LogicAppHealthCheckResult]] GetRunHistoryByName([string] $logicAppName) 
     {       
-        [WorkflowRun[]] $WorkflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
-            -Name $LogicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
+        [WorkflowRun[]] $workflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
+            -Name $logicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
             
-        [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults `
+        [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults `
             = [List[LogicAppHealthCheckResult]]::new()
 
-        foreach($WorkflowRun in $WorkflowRuns) 
+        foreach($workflowRun in $workflowRuns) 
         {
-            $LogicAppHealthCheckResult = [LogicAppHealthCheckResult]::new()
-            $LogicAppHealthCheckResult.StartTime = $WorkflowRun.StartTime
-            $LogicAppHealthCheckResult.EndTime = $WorkflowRun.EndTime
-            $LogicAppHealthCheckResult.Status = $WorkflowRun.Status
+            $logicAppHealthCheckResult = [LogicAppHealthCheckResult]::new()
+            $logicAppHealthCheckResult.StartTime = $workflowRun.StartTime
+            $logicAppHealthCheckResult.EndTime = $workflowRun.EndTime
+            $logicAppHealthCheckResult.Status = $workflowRun.Status
 
-            $LogicAppHealthCheckResults.Add($LogicAppHealthCheckResult)
+            $logicAppHealthCheckResults.Add($logicAppHealthCheckResult)
         }
-        return $LogicAppHealthCheckResults
+        return $logicAppHealthCheckResults
     }
 }
 
@@ -38,22 +38,22 @@ class LogicAppHealthCheck
     [string] $RgName
 
     [LogicAppHealthCheckSummary] GetHealthCheckSummary(
-        [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults)
+        [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults)
     {
-        $LogicAppHealthCheckSummary = [LogicAppHealthCheckSummary]::new()
+        $logicAppHealthCheckSummary = [LogicAppHealthCheckSummary]::new()
 
         [int] $failedRunCount = 0
-        foreach ($LogicAppHealthCheckResult in $LogicAppHealthCheckResults)
+        foreach ($logicAppHealthCheckResult in $logicAppHealthCheckResults)
         {
-            if ($LogicAppHealthCheckResult.Status -eq "Succeeded")
+            if ($logicAppHealthCheckResult.Status -eq "Failed")
             {
                 $failedRunCount++
             }
         }
 
-        $LogicAppHealthCheckSummary.FailedRunCount = $failedRunCount
+        $logicAppHealthCheckSummary.FailedRunCount = $failedRunCount
 
-        return $LogicAppHealthCheckSummary
+        return $logicAppHealthCheckSummary
     }
 }
 
@@ -69,30 +69,30 @@ class LogicAppHealthCheckSummary
     [int] $FailedRunCount
 }
 
-$LogicAppRepo = [LogicAppRepo]::new()
-$LogicAppRepo.RgName = $ResourceGroupName
-[IEnumerable[Workflow]] $LogicApps = $LogicAppRepo.GetNamesByResourceGroup()
+$logicAppRepo = [LogicAppRepo]::new()
+$logicAppRepo.RgName = $ResourceGroupName
+[IEnumerable[Workflow]] $logicApps = $logicAppRepo.GetNamesByResourceGroup()
 
-$LogicAppHealthCheck = [LogicAppHealthCheck]::new()
-$LogicAppHealthCheck.RgName = $ResourceGroupName
+$logicAppHealthCheck = [LogicAppHealthCheck]::new()
+$logicAppHealthCheck.RgName = $ResourceGroupName
 
-foreach($LogicApp in $LogicApps) 
+foreach($logicApp in $logicApps) 
 {
-    Write-Host "---- " $LogicApp.Name " (start time, end time, status)"
+    Write-Host "---- " $logicApp.Name " (start time, end time, status)"
 
-    [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults `
-        = $LogicAppRepo.GetRunHistoryByName($LogicApp.Name)
+    [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults `
+        = $logicAppRepo.GetRunHistoryByName($logicApp.Name)
 
-    foreach($LogicAppHealthCheckResult in $LogicAppHealthCheckResults) 
+    foreach($logicAppHealthCheckResult in $logicAppHealthCheckResults) 
     {
-       Write-Host $LogicAppHealthCheckResult.StartTime " " $LogicAppHealthCheckResult.EndTime `
-           " " $LogicAppHealthCheckResult.Status
+       Write-Host $logicAppHealthCheckResult.StartTime " " $logicAppHealthCheckResult.EndTime `
+           " " $logicAppHealthCheckResult.Status
     }
 
-    [LogicAppHealthCheckSummary] $LogicAppHealthCheckSummary `
-        = $LogicAppHealthCheck.GetHealthCheckSummary($LogicAppHealthCheckResults)
+    [LogicAppHealthCheckSummary] $logicAppHealthCheckSummary `
+        = $logicAppHealthCheck.GetHealthCheckSummary($logicAppHealthCheckResults)
 
-    Write-Host "Failed run count: " $LogicAppHealthCheckSummary.FailedRunCount
+    Write-Host "Failed run count: " $logicAppHealthCheckSummary.FailedRunCount
     Write-Host ""
 }
 
@@ -110,4 +110,5 @@ Output:
 6/28/2021 9:16:47 AM   6/28/2021 9:16:47 AM   Succeeded
 6/28/2021 9:06:46 AM   6/28/2021 9:06:47 AM   Succeeded
 6/28/2021 8:56:46 AM   6/28/2021 8:56:46 AM   Succeeded
+Failed run count:  0
 #>
