@@ -35,7 +35,26 @@ class LogicAppRepo
 
 class LogicAppHealthCheck 
 {    
-    [string] $RgName    
+    [string] $RgName
+
+    [LogicAppHealthCheckSummary] GetHealthCheckSummary(
+        [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults)
+    {
+        $LogicAppHealthCheckSummary = [LogicAppHealthCheckSummary]::new()
+
+        [int] $failedRunCount = 0
+        foreach ($LogicAppHealthCheckResult in $LogicAppHealthCheckResults)
+        {
+            if ($LogicAppHealthCheckResult.Status -eq "Succeeded")
+            {
+                $failedRunCount++
+            }
+        }
+
+        $LogicAppHealthCheckSummary.FailedRunCount = $failedRunCount
+
+        return $LogicAppHealthCheckSummary
+    }
 }
 
 class LogicAppHealthCheckResult 
@@ -43,6 +62,11 @@ class LogicAppHealthCheckResult
     [DateTime] $StartTime
     [DateTime] $EndTime
     [string] $Status
+}
+
+class LogicAppHealthCheckSummary 
+{
+    [int] $FailedRunCount
 }
 
 $LogicAppRepo = [LogicAppRepo]::new()
@@ -64,6 +88,11 @@ foreach($LogicApp in $LogicApps)
        Write-Host $LogicAppHealthCheckResult.StartTime " " $LogicAppHealthCheckResult.EndTime `
            " " $LogicAppHealthCheckResult.Status
     }
+
+    [LogicAppHealthCheckSummary] $LogicAppHealthCheckSummary `
+        = $LogicAppHealthCheck.GetHealthCheckSummary($LogicAppHealthCheckResults)
+
+    Write-Host "Failed run count: " $LogicAppHealthCheckSummary.FailedRunCount
     Write-Host ""
 }
 
