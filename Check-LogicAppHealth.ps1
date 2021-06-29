@@ -3,23 +3,25 @@ using namespace System.Collections.Generic
 
 param([string] $ResourceGroupName) 
 
-class LogicAppRepo {
+class LogicAppRepo 
+{
     [string] $RgName
 
-    [IEnumerable[Workflow]] GetLogicAppNamesByResourceGroup() {       
+    [IEnumerable[Workflow]] GetNamesByResourceGroup() 
+    {       
         return Get-AzLogicApp -ResourceGroupName $this.RgName
     }
-}
 
-class LogicAppHealthCheck {    
-    [string] $RgName
-
-    [IEnumerable[LogicAppHealthCheckResult]] HealthCheck([string] $LogicAppName) {       
-        [WorkflowRun[]] $WorkflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName -Name $LogicAppName |
-            Sort-Object -Property StartTime -Descending | Select-Object -First 10
+    [IEnumerable[LogicAppHealthCheckResult]] GetRunHistoryByName([string] $LogicAppName) 
+    {       
+        [WorkflowRun[]] $WorkflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
+            -Name $LogicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
             
-        [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults = [List[LogicAppHealthCheckResult]]::new()
-        foreach($WorkflowRun in $WorkflowRuns) {
+        [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults `
+            = [List[LogicAppHealthCheckResult]]::new()
+
+        foreach($WorkflowRun in $WorkflowRuns) 
+        {
             $LogicAppHealthCheckResult = [LogicAppHealthCheckResult]::new()
             $LogicAppHealthCheckResult.StartTime = $WorkflowRun.StartTime
             $LogicAppHealthCheckResult.EndTime = $WorkflowRun.EndTime
@@ -31,7 +33,13 @@ class LogicAppHealthCheck {
     }
 }
 
-class LogicAppHealthCheckResult {
+class LogicAppHealthCheck 
+{    
+    [string] $RgName    
+}
+
+class LogicAppHealthCheckResult 
+{
     [DateTime] $StartTime
     [DateTime] $EndTime
     [string] $Status
@@ -39,15 +47,22 @@ class LogicAppHealthCheckResult {
 
 $LogicAppRepo = [LogicAppRepo]::new()
 $LogicAppRepo.RgName = $ResourceGroupName
-[IEnumerable[Workflow]] $LogicApps = $LogicAppRepo.GetLogicAppNamesByResourceGroup()
+[IEnumerable[Workflow]] $LogicApps = $LogicAppRepo.GetNamesByResourceGroup()
 
 $LogicAppHealthCheck = [LogicAppHealthCheck]::new()
 $LogicAppHealthCheck.RgName = $ResourceGroupName
-foreach($LogicApp in $LogicApps) {
+
+foreach($LogicApp in $LogicApps) 
+{
     Write-Host "---- " $LogicApp.Name " (start time, end time, status)"
-    [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults = $LogicAppHealthCheck.HealthCheck($LogicApp.Name)
-    foreach($LogicAppHealthCheckResult in $LogicAppHealthCheckResults) {
-       Write-Host $LogicAppHealthCheckResult.StartTime " " $LogicAppHealthCheckResult.EndTime " " $LogicAppHealthCheckResult.Status
+
+    [IEnumerable[LogicAppHealthCheckResult]] $LogicAppHealthCheckResults `
+        = $LogicAppRepo.GetRunHistoryByName($LogicApp.Name)
+
+    foreach($LogicAppHealthCheckResult in $LogicAppHealthCheckResults) 
+    {
+       Write-Host $LogicAppHealthCheckResult.StartTime " " $LogicAppHealthCheckResult.EndTime `
+           " " $LogicAppHealthCheckResult.Status
     }
     Write-Host ""
 }
