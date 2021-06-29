@@ -48,7 +48,10 @@ class LogicAppRepo
         {
             $logicAppRunHistoryModel = [LogicAppRunHistoryModel]::new()
             $logicAppRunHistoryModel.StartTime = $workflowRun.StartTime
-            $logicAppRunHistoryModel.EndTime = $workflowRun.EndTime
+            if ($workflowRun.EndTime -ne $null) 
+            {
+                $logicAppRunHistoryModel.EndTime = $workflowRun.EndTime
+            }
             $logicAppRunHistoryModel.Status = $workflowRun.Status
 
             $logicAppRunHistoryModels.Add($logicAppRunHistoryModel)
