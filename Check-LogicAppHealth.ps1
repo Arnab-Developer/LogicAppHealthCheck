@@ -3,98 +3,92 @@ using namespace System.Collections.Generic
 
 param([string] $ResourceGroupName) 
 
-class LogicAppRepo 
+class LogicAppModel
 {
     [string] $RgName
-
-    [IEnumerable[Workflow]] GetNamesByResourceGroup() 
-    {       
-        return Get-AzLogicApp -ResourceGroupName $this.RgName
-    }
-
-    [IEnumerable[LogicAppHealthCheckResult]] GetRunHistoryByName([string] $logicAppName) 
-    {       
-        [WorkflowRun[]] $workflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
-            -Name $logicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
-            
-        [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults `
-            = [List[LogicAppHealthCheckResult]]::new()
-
-        foreach($workflowRun in $workflowRuns) 
-        {
-            $logicAppHealthCheckResult = [LogicAppHealthCheckResult]::new()
-            $logicAppHealthCheckResult.StartTime = $workflowRun.StartTime
-            $logicAppHealthCheckResult.EndTime = $workflowRun.EndTime
-            $logicAppHealthCheckResult.Status = $workflowRun.Status
-
-            $logicAppHealthCheckResults.Add($logicAppHealthCheckResult)
-        }
-        return $logicAppHealthCheckResults
-    }
+    [string] $LogicAppName
+    [IEnumerable[LogicAppRunHistoryModel]] $RunHistory
 }
 
-class LogicAppHealthCheck 
-{    
-    [string] $RgName
-
-    [LogicAppHealthCheckSummary] GetHealthCheckSummary(
-        [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults)
-    {
-        $logicAppHealthCheckSummary = [LogicAppHealthCheckSummary]::new()
-
-        [int] $failedRunCount = 0
-        foreach ($logicAppHealthCheckResult in $logicAppHealthCheckResults)
-        {
-            if ($logicAppHealthCheckResult.Status -eq "Failed")
-            {
-                $failedRunCount++
-            }
-        }
-
-        $logicAppHealthCheckSummary.FailedRunCount = $failedRunCount
-
-        return $logicAppHealthCheckSummary
-    }
-}
-
-class LogicAppHealthCheckResult 
+class LogicAppRunHistoryModel
 {
     [DateTime] $StartTime
     [DateTime] $EndTime
     [string] $Status
 }
 
-class LogicAppHealthCheckSummary 
+class LogicAppRepo 
 {
-    [int] $FailedRunCount
+    [string] $RgName
+
+    [IEnumerable[LogicAppModel]] GetByResourceGroup() 
+    {
+        [IEnumerable[Workflow]] $logicApps = Get-AzLogicApp -ResourceGroupName $this.RgName
+        [IEnumerable[LogicAppModel]] $logicAppModels = [List[LogicAppModel]]::new()
+        foreach ($logicApp in $logicApps)
+        {
+            $logicAppModel = [LogicAppModel]::new()
+            $logicAppModel.RgName = $this.RgName
+            $logicAppModel.LogicAppName = $logicApp.Name
+
+            $logicAppModels.Add($logicAppModel)
+        }
+        return $logicAppModels
+    }
+
+    [IEnumerable[LogicAppRunHistoryModel]] GetRunHistoryByName([string] $logicAppName) 
+    {
+        [WorkflowRun[]] $workflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
+            -Name $logicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
+            
+        [IEnumerable[LogicAppRunHistoryModel]] $logicAppRunHistoryModels `
+            = [List[LogicAppRunHistoryModel]]::new() 
+
+        foreach ($workflowRun in $workflowRuns)
+        {
+            $logicAppRunHistoryModel = [LogicAppRunHistoryModel]::new()
+            $logicAppRunHistoryModel.StartTime = $workflowRun.StartTime
+            $logicAppRunHistoryModel.EndTime = $workflowRun.EndTime
+            $logicAppRunHistoryModel.Status = $workflowRun.Status
+
+            $logicAppRunHistoryModels.Add($logicAppRunHistoryModel)
+        }
+
+        return $logicAppRunHistoryModels
+    }
+}
+
+function PopulateRunHistory([IEnumerable[LogicAppModel]] $logicAppModels)
+{
+    foreach ($logicAppModel in $logicAppModels)
+    {
+        [IEnumerable[LogicAppRunHistoryModel]] $logicAppRunHistoryModels `
+            = $logicAppRepo.GetRunHistoryByName($logicAppModel.LogicAppName)
+
+        $logicAppModel.RunHistory = $logicAppRunHistoryModels
+    }
+}
+
+function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels)
+{
+    foreach ($logicAppModel in $logicAppModels)
+    {
+        Write-Host "----" $logicAppModel.LogicAppName " (start time, end time, status)"
+        foreach ($runHistory in $logicAppModel.RunHistory)
+        {
+            Write-Host $runHistory.StartTime " " $runHistory.EndTime " " $runHistory.Status
+        }
+        Write-Host ""
+    }
 }
 
 $logicAppRepo = [LogicAppRepo]::new()
 $logicAppRepo.RgName = $ResourceGroupName
-[IEnumerable[Workflow]] $logicApps = $logicAppRepo.GetNamesByResourceGroup()
 
-$logicAppHealthCheck = [LogicAppHealthCheck]::new()
-$logicAppHealthCheck.RgName = $ResourceGroupName
+[IEnumerable[LogicAppModel]] $logicAppModels = $logicAppRepo.GetByResourceGroup()
+PopulateRunHistory($logicAppModels)
 
-foreach($logicApp in $logicApps) 
-{
-    Write-Host "---- " $logicApp.Name " (start time, end time, status)"
-
-    [IEnumerable[LogicAppHealthCheckResult]] $logicAppHealthCheckResults `
-        = $logicAppRepo.GetRunHistoryByName($logicApp.Name)
-
-    foreach($logicAppHealthCheckResult in $logicAppHealthCheckResults) 
-    {
-       Write-Host $logicAppHealthCheckResult.StartTime " " $logicAppHealthCheckResult.EndTime `
-           " " $logicAppHealthCheckResult.Status
-    }
-
-    [LogicAppHealthCheckSummary] $logicAppHealthCheckSummary `
-        = $logicAppHealthCheck.GetHealthCheckSummary($logicAppHealthCheckResults)
-
-    Write-Host "Failed run count: " $logicAppHealthCheckSummary.FailedRunCount
-    Write-Host ""
-}
+PrintResult($logicAppModels)
 
 <#
 Output:
@@ -110,5 +104,4 @@ Output:
 6/28/2021 9:16:47 AM   6/28/2021 9:16:47 AM   Succeeded
 6/28/2021 9:06:46 AM   6/28/2021 9:06:47 AM   Succeeded
 6/28/2021 8:56:46 AM   6/28/2021 8:56:46 AM   Succeeded
-Failed run count:  0
 #>
