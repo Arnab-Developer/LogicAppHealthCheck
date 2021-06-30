@@ -1,7 +1,12 @@
 using namespace Microsoft.Azure.Management.Logic.Models
 using namespace System.Collections.Generic
 
-param([string] $ResourceGroupName) 
+param(
+    [Parameter(Mandatory=$true)]
+    [ValidateNotNullOrEmpty()]
+    [string] 
+    $ResourceGroupName
+)
 
 class LogicAppModel
 {
@@ -19,7 +24,12 @@ class LogicAppRunHistoryModel
 
 class LogicAppRepo 
 {
-    [string] $RgName
+    hidden [string] $RgName
+
+    LogicAppRepo([string] $rgName)    
+    {
+        $this.RgName = $rgName
+    }
 
     [IEnumerable[LogicAppModel]] GetByResourceGroup() 
     {
@@ -85,12 +95,9 @@ function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels)
     }
 }
 
-$logicAppRepo = [LogicAppRepo]::new()
-$logicAppRepo.RgName = $ResourceGroupName
-
+$logicAppRepo = [LogicAppRepo]::new($ResourceGroupName)
 [IEnumerable[LogicAppModel]] $logicAppModels = $logicAppRepo.GetByResourceGroup()
 PopulateRunHistory($logicAppModels)
-
 PrintResult($logicAppModels)
 
 <#
