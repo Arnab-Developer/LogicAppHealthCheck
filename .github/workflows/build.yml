@@ -21,7 +21,7 @@ jobs:
     - name: Setup
       run: |
         Install-Module -Name Az -Confirm:$true
-        Get-AzLogicApp
+        Import-Module -Name Az
 
     - name: Build and test      
       shell: pwsh
