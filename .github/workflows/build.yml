@@ -43,4 +43,13 @@ jobs:
       
     - name: Publish      
       shell: pwsh
-      run: Publish-Script -Path Check-LogicAppHealth.ps1 -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_API_KEY }}
+      run: |
+        # workaround of issue #1
+        # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
+        Install-Module -Name Az.LogicApp
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
+        try { Get-AzLogicApp }
+        catch { }
+
+        Publish-Script -Path Check-LogicAppHealth.ps1 -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_API_KEY }}
