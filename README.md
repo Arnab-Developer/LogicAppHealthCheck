@@ -16,4 +16,4 @@ Check-LogicAppHealth.ps1 -ResourceGroupName "<resource-group-name>"
 ```
 
 > :point_right: Note: If you find an error saying **`Workflow` type is not found** then check 
-> [this issue](https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1)
+> [this issue](https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1).
