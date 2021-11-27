@@ -16,9 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
+    # workaround of issue #1
+    # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
     - name: Setup
       run: |
-        Install-Module -Name Az
+        Install-Module -Name Az.LogicApp -Confirm True
         Get-AzLogicApp
 
     - name: Build and test      
