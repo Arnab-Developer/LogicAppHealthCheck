@@ -1,6 +1,6 @@
 # Logic app health check
 
-This is a PowerShell script to check health for all logic apps inside a
+This is a PowerShell script to check health of all logic apps inside a
 resource group.
 
 Install from PowerShell Gallery.
