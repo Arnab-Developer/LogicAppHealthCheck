@@ -1,0 +1,59 @@
+name: build
+
+on:  
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [created]
+
+jobs:
+  build:    
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Build and test      
+      shell: pwsh
+      run: |             
+        $newScriptInfo = @{
+          Path = 'Check-LogicAppHealth.ps1'
+          Version = '1.0.0'
+          Author = 'arnab-roy-chowdhury'
+          Description = "Check logic app health on Azure"
+          ProjectUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck"
+          Tags = "azure, logicapp"
+          LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
+        }
+        Update-ScriptFileInfo @newScriptInfo -Force
+        Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
+
+  powershell-gallery-push:    
+    name: PowerShell gallery push
+    if: ${{ github.event_name == 'release' }}
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: "PowerShellGallery"
+      url: "https://www.powershellgallery.com/packages/Update-InstalledModules"
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Publish      
+      shell: pwsh
+      run: |             
+        $newScriptInfo = @{
+          Path = 'Check-LogicAppHealth.ps1'
+          Version = '1.0.0'
+          Author = 'arnab-roy-chowdhury'
+          Description = "Check logic app health on Azure"
+          ProjectUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck"
+          Tags = "azure, logicapp"
+          LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
+        }
+        Update-ScriptFileInfo @newScriptInfo -Force
+        Publish-Script -Path Check-LogicAppHealth.ps1 -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_API_KEY }}
