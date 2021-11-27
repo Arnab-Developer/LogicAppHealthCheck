@@ -1,3 +1,13 @@
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 89cc6cbf-08c7-487c-85f1-c00db68f1209
+.AUTHOR arnab-roy-chowdhury
+.TAGS azure, logicapp
+.LICENSEURI https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE
+.PROJECTURI https://github.com/Arnab-Developer/LogicAppHealthCheck
+.DESCRIPTION Check logic app health on Azure. Read more https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/README.md
+#>
+
 using namespace Microsoft.Azure.Management.Logic.Models
 using namespace System.Collections.Generic
 
@@ -99,3 +109,18 @@ $logicAppRepo = [LogicAppRepo]::new($ResourceGroupName)
 [IEnumerable[LogicAppModel]] $logicAppModels = $logicAppRepo.GetByResourceGroup()
 PopulateRunHistory($logicAppModels)
 PrintResult($logicAppModels)
+
+<#
+Output:
+----  DemoLogicAppName  (start time, end time, status)
+6/28/2021 10:26:49 AM   6/28/2021 10:26:49 AM   Succeeded
+6/28/2021 10:16:49 AM   6/28/2021 10:16:49 AM   Succeeded
+6/28/2021 10:06:48 AM   6/28/2021 10:06:49 AM   Succeeded
+6/28/2021 9:56:48 AM   6/28/2021 9:56:48 AM   Succeeded
+6/28/2021 9:46:48 AM   6/28/2021 9:46:55 AM   Succeeded
+6/28/2021 9:36:47 AM   6/28/2021 9:36:48 AM   Succeeded
+6/28/2021 9:26:47 AM   6/28/2021 9:26:47 AM   Succeeded
+6/28/2021 9:16:47 AM   6/28/2021 9:16:47 AM   Succeeded
+6/28/2021 9:06:46 AM   6/28/2021 9:06:47 AM   Succeeded
+6/28/2021 8:56:46 AM   6/28/2021 8:56:46 AM   Succeeded
+#>

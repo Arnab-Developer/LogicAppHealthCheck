@@ -16,29 +16,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Build and test      
+    - name: Test      
       shell: pwsh
-      run: |             
-        $newScriptInfo = @{
-          Path = 'Check-LogicAppHealth.ps1'
-          Version = '1.0.0'
-          Author = 'arnab-roy-chowdhury'
-          Description = "Check logic app health on Azure"
-          ProjectUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck"
-          Tags = "azure, logicapp"
-          LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
-        }
-
-        # workaround of issue #1
-        # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
-        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
-        Install-Module -Name Az.LogicApp
-        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
-        try { Get-AzLogicApp }
-        catch { }
-
-        Update-ScriptFileInfo @newScriptInfo -Force
-        Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
+      run: Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
   powershell-gallery-push:    
     name: PowerShell gallery push
@@ -54,15 +34,4 @@ jobs:
       
     - name: Publish      
       shell: pwsh
-      run: |             
-        $newScriptInfo = @{
-          Path = 'Check-LogicAppHealth.ps1'
-          Version = '1.0.0'
-          Author = 'arnab-roy-chowdhury'
-          Description = "Check logic app health on Azure"
-          ProjectUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck"
-          Tags = "azure, logicapp"
-          LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
-        }
-        Update-ScriptFileInfo @newScriptInfo -Force
-        Publish-Script -Path Check-LogicAppHealth.ps1 -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_API_KEY }}
+      run: Publish-Script -Path Check-LogicAppHealth.ps1 -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_API_KEY }}
