@@ -19,8 +19,8 @@ jobs:
     # workaround of issue #1
     # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
     - name: Setup
+      shell: pwsh
       run: |
-        Import-Module PowerShellGet
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
         Install-Module -Name Az
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
