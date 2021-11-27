@@ -99,19 +99,3 @@ $logicAppRepo = [LogicAppRepo]::new($ResourceGroupName)
 [IEnumerable[LogicAppModel]] $logicAppModels = $logicAppRepo.GetByResourceGroup()
 PopulateRunHistory($logicAppModels)
 PrintResult($logicAppModels)
-
-<#
-Output:
-
-----  DemoLogicAppName  (start time, end time, status)
-6/28/2021 10:26:49 AM   6/28/2021 10:26:49 AM   Succeeded
-6/28/2021 10:16:49 AM   6/28/2021 10:16:49 AM   Succeeded
-6/28/2021 10:06:48 AM   6/28/2021 10:06:49 AM   Succeeded
-6/28/2021 9:56:48 AM   6/28/2021 9:56:48 AM   Succeeded
-6/28/2021 9:46:48 AM   6/28/2021 9:46:55 AM   Succeeded
-6/28/2021 9:36:47 AM   6/28/2021 9:36:48 AM   Succeeded
-6/28/2021 9:26:47 AM   6/28/2021 9:26:47 AM   Succeeded
-6/28/2021 9:16:47 AM   6/28/2021 9:16:47 AM   Succeeded
-6/28/2021 9:06:46 AM   6/28/2021 9:06:47 AM   Succeeded
-6/28/2021 8:56:46 AM   6/28/2021 8:56:46 AM   Succeeded
-#>
