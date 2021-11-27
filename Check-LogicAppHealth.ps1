@@ -1,3 +1,13 @@
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 89cc6cbf-08c7-487c-85f1-c00db68f1209
+.AUTHOR arnab-roy-chowdhury
+.TAGS azure, logicapp
+.LICENSEURI https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE
+.PROJECTURI https://github.com/Arnab-Developer/LogicAppHealthCheck
+.DESCRIPTION Check logic app health on Azure. Read more https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/README.md
+#>
+
 using namespace Microsoft.Azure.Management.Logic.Models
 using namespace System.Collections.Generic
 
@@ -102,7 +112,6 @@ PrintResult($logicAppModels)
 
 <#
 Output:
-
 ----  DemoLogicAppName  (start time, end time, status)
 6/28/2021 10:26:49 AM   6/28/2021 10:26:49 AM   Succeeded
 6/28/2021 10:16:49 AM   6/28/2021 10:16:49 AM   Succeeded
