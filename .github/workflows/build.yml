@@ -28,7 +28,8 @@ jobs:
           Tags = "azure, logicapp"
           LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
         }
-        #Update-ScriptFileInfo @newScriptInfo -Force
+        Get-AzLogicApp
+        Update-ScriptFileInfo @newScriptInfo -Force
         Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
   powershell-gallery-push:    
