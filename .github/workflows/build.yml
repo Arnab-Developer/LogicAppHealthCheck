@@ -20,7 +20,9 @@ jobs:
     # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
     - name: Setup
       run: |
-        Install-Module -Name Az -Confirm $false
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
+        Install-Module -Name Az
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
         Import-Module -Name Az
 
     - name: Build and test      
