@@ -26,6 +26,7 @@ jobs:
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
         try { Get-AzLogicApp }
         catch { }
+        .\Check-LogicAppHealth.ps1
 
     - name: Build and test      
       shell: pwsh
