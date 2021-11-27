@@ -24,7 +24,7 @@ jobs:
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
         Install-Module -Name Az
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
-        Import-Module -Name Az
+        Get-AzLogicApp
 
     - name: Build and test      
       shell: pwsh
