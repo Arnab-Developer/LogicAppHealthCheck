@@ -9,8 +9,8 @@ on:
     types: [created]
 
 jobs:
-  build:    
-    name: Build
+  test:    
+    name: Test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -18,13 +18,22 @@ jobs:
       
     - name: Test      
       shell: pwsh
-      run: Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
+      run: |
+        # workaround of issue #1
+        # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
+        Install-Module -Name Az.LogicApp
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
+        try { Get-AzLogicApp }
+        catch { }
+
+        Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
   powershell-gallery-push:    
     name: PowerShell gallery push
     if: ${{ github.event_name == 'release' }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     environment:
       name: "PowerShellGallery"
       url: "https://www.powershellgallery.com/packages/Update-InstalledModules"
