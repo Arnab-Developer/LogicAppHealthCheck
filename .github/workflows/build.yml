@@ -20,7 +20,7 @@ jobs:
     # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
     - name: Setup
       run: |
-        Install-Module -Name Az.LogicApp -Confirm:$true
+        Install-Module -Name Az -Confirm:$true
         Get-AzLogicApp
 
     - name: Build and test      
