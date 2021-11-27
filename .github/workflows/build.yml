@@ -31,7 +31,7 @@ jobs:
 
   powershell-gallery-push:    
     name: PowerShell gallery push
-    #if: ${{ github.event_name == 'release' }}
+    if: ${{ github.event_name == 'release' }}
     runs-on: ubuntu-latest
     needs: test
     environment:
