@@ -44,9 +44,9 @@ jobs:
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
         try { Get-AzLogicApp }
         catch { }
-        .\Check-LogicAppHealth.ps1
-        #Update-ScriptFileInfo @newScriptInfo -Force
-        #Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
+        #.\Check-LogicAppHealth.ps1
+        Update-ScriptFileInfo @newScriptInfo -Force
+        Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
   powershell-gallery-push:    
     name: PowerShell gallery push
