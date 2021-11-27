@@ -36,7 +36,7 @@ jobs:
     needs: test
     environment:
       name: "PowerShellGallery"
-      url: "https://www.powershellgallery.com/packages/Update-InstalledModules"
+      url: "https://www.powershellgallery.com/packages/Check-LogicAppHealth"
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
