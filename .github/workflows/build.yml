@@ -18,14 +18,14 @@ jobs:
       
     # workaround of issue #1
     # https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1
-    - name: Setup
-      shell: pwsh
-      run: |
-        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
-        Install-Module -Name Az.LogicApp
-        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
-        try { Get-AzLogicApp }
-        catch { }        
+    #- name: Setup
+    #  shell: pwsh
+    #  run: |
+    #    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
+    #    Install-Module -Name Az.LogicApp
+    #    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
+    #    try { Get-AzLogicApp }
+    #    catch { }
 
     - name: Build and test      
       shell: pwsh
@@ -39,6 +39,11 @@ jobs:
           Tags = "azure, logicapp"
           LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
         }
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
+        Install-Module -Name Az.LogicApp
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
+        try { Get-AzLogicApp }
+        catch { }
         .\Check-LogicAppHealth.ps1
         #Update-ScriptFileInfo @newScriptInfo -Force
         #Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
