@@ -22,9 +22,10 @@ jobs:
       shell: pwsh
       run: |
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
-        Install-Module -Name Az
+        Install-Module -Name Az.LogicApp
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
-        Get-AzLogicApp
+        try { Get-AzLogicApp }
+        catch { }
 
     - name: Build and test      
       shell: pwsh
