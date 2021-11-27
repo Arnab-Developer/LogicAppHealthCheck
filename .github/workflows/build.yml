@@ -16,6 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
+    - name: Setup
+      url: |
+        Install-Module -Name Az
+        Get-AzLogicApp
+
     - name: Build and test      
       shell: pwsh
       run: |             
@@ -28,7 +33,6 @@ jobs:
           Tags = "azure, logicapp"
           LicenseUri = "https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE"
         }
-        Get-AzLogicApp
         Update-ScriptFileInfo @newScriptInfo -Force
         Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
