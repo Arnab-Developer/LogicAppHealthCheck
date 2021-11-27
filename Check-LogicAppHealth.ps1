@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.VERSION 1.0.1
+.VERSION 1.0.0
 .GUID 89cc6cbf-08c7-487c-85f1-c00db68f1209
 .AUTHOR arnab-roy-chowdhury
 .TAGS azure, logicapp
