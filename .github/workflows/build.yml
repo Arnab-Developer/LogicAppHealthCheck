@@ -37,7 +37,7 @@ jobs:
         try { Get-AzLogicApp }
         catch { }
 
-        #Update-ScriptFileInfo @newScriptInfo -Force
+        Update-ScriptFileInfo @newScriptInfo -Force
         Test-ScriptFileInfo -Path Check-LogicAppHealth.ps1 | Format-List
 
   powershell-gallery-push:    
