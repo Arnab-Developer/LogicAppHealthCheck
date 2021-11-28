@@ -3,7 +3,7 @@
 This is a PowerShell script to check health of all logic apps inside a
 resource group.
 
-Install from PowerShell Gallery.
+Install from [PowerShell Gallery](https://www.powershellgallery.com/packages/Check-LogicAppHealth).
 
 ```
 Install-Script -Name Check-LogicAppHealth

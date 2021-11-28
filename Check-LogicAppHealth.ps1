@@ -1,11 +1,11 @@
 <#PSScriptInfo
-.VERSION 1.0.2
+.VERSION 1.0.3
 .GUID 89cc6cbf-08c7-487c-85f1-c00db68f1209
 .AUTHOR arnab-roy-chowdhury
 .TAGS azure, logicapp
 .LICENSEURI https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/LICENSE
 .PROJECTURI https://github.com/Arnab-Developer/LogicAppHealthCheck
-.DESCRIPTION Check logic app health on Azure. Read more https://github.com/Arnab-Developer/LogicAppHealthCheck/blob/main/README.md
+.DESCRIPTION Check logic apps health on Azure
 #>
 
 using namespace Microsoft.Azure.Management.Logic.Models
