@@ -1,7 +1,7 @@
 # Logic app health check
 
 This is a PowerShell script to check health of all logic apps inside a
-resource group.
+resource group. You need to have Azure PowerShell (AZ module) installed in your system to run this script.
 
 Install from [PowerShell Gallery](https://www.powershellgallery.com/packages/Check-LogicAppHealth).
 
@@ -13,6 +13,12 @@ Login with Azure PowerShell.
 
 ```
 Connect-AzAccount
+```
+
+If you have more than one subscriptions then set your proper context.
+
+```
+Set-AzContext "<subscription name>"
 ```
 
 Run the below command to run the script.
