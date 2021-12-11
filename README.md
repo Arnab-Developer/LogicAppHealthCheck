@@ -9,6 +9,12 @@ Install from [PowerShell Gallery](https://www.powershellgallery.com/packages/Che
 Install-Script -Name Check-LogicAppHealth
 ```
 
+Login with Azure PowerShell.
+
+```
+Connect-AzAccount
+```
+
 Run the below command to run the script.
 
 ```
