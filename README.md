@@ -15,5 +15,5 @@ Run the below command to run the script.
 Check-LogicAppHealth.ps1 -ResourceGroupName "<resource-group-name>"
 ```
 
-> :point_right: Note: If you find an error saying **`Workflow` type is not found** then check 
-> [this issue](https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1).
+> :point_right: Note: If you find an error saying **script has parse errors** or **`Workflow` type is not found** 
+> then check [this issue](https://github.com/Arnab-Developer/LogicAppHealthCheck/issues/1).
