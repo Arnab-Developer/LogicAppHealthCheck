@@ -83,10 +83,10 @@ function PopulateRunHistory([IEnumerable[LogicAppModel]] $logicAppModels) {
 
 function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels) {
     foreach ($logicAppModel in $logicAppModels) {
-        Write-Host "----" $logicAppModel.LogicAppName " (start time, end time, status)"
+        Write-Host -Object "----" $logicAppModel.LogicAppName " (start time, end time, status)"
         foreach ($runHistory in $logicAppModel.RunHistory) {
-            Write-Host $runHistory.StartTime " " $runHistory.EndTime " " $runHistory.Status
-        }
+            Write-Host -Object @($runHistory.StartTime, $runHistory.EndTime, $runHistory.Status) -Separator " "
+	}
         Write-Host ""
     }
 }
