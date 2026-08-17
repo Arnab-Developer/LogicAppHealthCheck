@@ -12,41 +12,35 @@ using namespace Microsoft.Azure.Management.Logic.Models
 using namespace System.Collections.Generic
 
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] 
     $ResourceGroupName
 )
 
-class LogicAppModel
-{
+class LogicAppModel {
     [string] $RgName
     [string] $LogicAppName
     [IEnumerable[LogicAppRunHistoryModel]] $RunHistory
 }
 
-class LogicAppRunHistoryModel
-{
+class LogicAppRunHistoryModel {
     [DateTime] $StartTime
     [DateTime] $EndTime
     [string] $Status
 }
 
-class LogicAppRepo 
-{
+class LogicAppRepo {
     hidden [string] $RgName
 
-    LogicAppRepo([string] $rgName)    
-    {
+    LogicAppRepo([string] $rgName) {
         $this.RgName = $rgName
     }
 
-    [IEnumerable[LogicAppModel]] GetByResourceGroup() 
-    {
+    [IEnumerable[LogicAppModel]] GetByResourceGroup() {
         [IEnumerable[Workflow]] $logicApps = Get-AzLogicApp -ResourceGroupName $this.RgName
         [IEnumerable[LogicAppModel]] $logicAppModels = [List[LogicAppModel]]::new()
-        foreach ($logicApp in $logicApps)
-        {
+        foreach ($logicApp in $logicApps) {
             $logicAppModel = [LogicAppModel]::new()
             $logicAppModel.RgName = $this.RgName
             $logicAppModel.LogicAppName = $logicApp.Name
@@ -56,20 +50,17 @@ class LogicAppRepo
         return $logicAppModels
     }
 
-    [IEnumerable[LogicAppRunHistoryModel]] GetRunHistoryByName([string] $logicAppName) 
-    {
+    [IEnumerable[LogicAppRunHistoryModel]] GetRunHistoryByName([string] $logicAppName) {
         [WorkflowRun[]] $workflowRuns = Get-AzLogicAppRunHistory -ResourceGroupName $this.RgName `
             -Name $logicAppName | Sort-Object -Property StartTime -Descending | Select-Object -First 10
             
         [IEnumerable[LogicAppRunHistoryModel]] $logicAppRunHistoryModels `
             = [List[LogicAppRunHistoryModel]]::new() 
 
-        foreach ($workflowRun in $workflowRuns)
-        {
+        foreach ($workflowRun in $workflowRuns) {
             $logicAppRunHistoryModel = [LogicAppRunHistoryModel]::new()
             $logicAppRunHistoryModel.StartTime = $workflowRun.StartTime
-            if ($workflowRun.EndTime -ne $null) 
-            {
+            if ($workflowRun.EndTime -ne $null) {
                 $logicAppRunHistoryModel.EndTime = $workflowRun.EndTime
             }
             $logicAppRunHistoryModel.Status = $workflowRun.Status
@@ -81,10 +72,8 @@ class LogicAppRepo
     }
 }
 
-function PopulateRunHistory([IEnumerable[LogicAppModel]] $logicAppModels)
-{
-    foreach ($logicAppModel in $logicAppModels)
-    {
+function PopulateRunHistory([IEnumerable[LogicAppModel]] $logicAppModels) {
+    foreach ($logicAppModel in $logicAppModels) {
         [IEnumerable[LogicAppRunHistoryModel]] $logicAppRunHistoryModels `
             = $logicAppRepo.GetRunHistoryByName($logicAppModel.LogicAppName)
 
@@ -92,13 +81,10 @@ function PopulateRunHistory([IEnumerable[LogicAppModel]] $logicAppModels)
     }
 }
 
-function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels)
-{
-    foreach ($logicAppModel in $logicAppModels)
-    {
+function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels) {
+    foreach ($logicAppModel in $logicAppModels) {
         Write-Host "----" $logicAppModel.LogicAppName " (start time, end time, status)"
-        foreach ($runHistory in $logicAppModel.RunHistory)
-        {
+        foreach ($runHistory in $logicAppModel.RunHistory) {
             Write-Host $runHistory.StartTime " " $runHistory.EndTime " " $runHistory.Status
         }
         Write-Host ""
