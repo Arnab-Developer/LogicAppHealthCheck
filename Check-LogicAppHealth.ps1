@@ -86,7 +86,7 @@ function PrintResult([IEnumerable[LogicAppModel]] $logicAppModels) {
         Write-Host -Object "----" $logicAppModel.LogicAppName " (start time, end time, status)"
         foreach ($runHistory in $logicAppModel.RunHistory) {
             Write-Host -Object @($runHistory.StartTime, $runHistory.EndTime, $runHistory.Status) -Separator " "
-	}
+	    }
         Write-Host ""
     }
 }
